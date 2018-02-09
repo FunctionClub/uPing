@@ -144,6 +144,21 @@ class Pinger():
         else:
             return False
 
+    def lost_percentage(self,zero,non_zero):
+
+        sum = len(zero) + len(non_zero)
+
+        if sum == 0:
+            return self.red(str(0) + " %")
+        else:
+            percentage = 100 * len(zero) / sum
+
+        if percentage <5:
+            return self.green(str(int(percentage)) + " %")
+        elif percentage < 10:
+            return self.yellow(str(int(percentage)) + " %")
+        else:
+            return self.red(str(int(percentage)) + " %")
 
     def print_graph(self):
         os.system("clear")
@@ -187,7 +202,8 @@ class Pinger():
 
         total_non_zero = self.morning_non_zero + self.midnight_non_zero + self.afternoon_non_zero+self.night_non_zero
 
-        total_zero = len(self.morning_zero + self.midnight_zero + self.afternoon_zero+self.night_zero)
+        total_zero_list = self.morning_zero + self.midnight_zero + self.afternoon_zero+self.night_zero
+        total_zero = len(total_zero_list)
 
         if(total_count - total_zero == 0):
             total_average = 0
@@ -221,8 +237,11 @@ class Pinger():
         print("{0:39}| {1:37}|".format("| 最低延迟: " + self.colored(  min(self.morning_non_zero) if len(self.morning_non_zero)!=0else 0),"最低延迟: " + self.colored(min(self.afternoon_non_zero) if len(self.afternoon_non_zero) != 0 else 0)  )  )
         print("{0:39}| {1:37}|".format("| 最高延迟: " + self.colored(max(self.morning_non_zero) if len(self.morning_non_zero)!=0else 0),"最高延迟: " + self.colored(max(self.afternoon_non_zero) if len(self.afternoon_non_zero) != 0 else 0)))
         print("{0:39}| {1:37}|".format("| 平均延迟: " + self.colored(morning_average),"平均延迟: " + self.colored(afternoon_average)))
-        print("{0:30}| {1:28}|".format("| 测试次数: " + str(len(self.morning_non_zero) + len(self.morning_zero)),"测试次数: " + str(len(self.afternoon_non_zero) + len(self.afternoon_zero))))
+        print("{0:38}| {1:36}|".format("| 丢包率  : "+ self.lost_percentage(self.morning_zero,self.morning_non_zero),"丢包率  : " + self.lost_percentage(self.afternoon_zero,self.afternoon_non_zero)))
         print("{0:39}| {1:37}|".format("| 超时次数: " + self.red(len(self.morning_zero)),"超时次数: " + self.red(len(self.afternoon_zero))))
+        print("{0:30}| {1:28}|".format("| 测试次数: " + str(len(self.morning_non_zero) + len(self.morning_zero)),"测试次数: " + str(len(self.afternoon_non_zero) + len(self.afternoon_zero))))
+
+
 
         print("-" * 53)
         print "| {0:37}| {1:37}|".format(self.blue("夜晚统计"), self.blue("半夜统计"))
@@ -234,14 +253,16 @@ class Pinger():
             "最高延迟: " + self.colored(max(self.midnight_non_zero) if len(self.midnight_non_zero) != 0 else 0)))
         print("{0:39}| {1:37}|".format("| 平均延迟: " + self.colored(night_average),
                                        "平均延迟: " + self.colored(midnight_average)))
-        print("{0:30}| {1:28}|".format("| 测试次数: " + str(len(self.night_non_zero) + len(self.night_zero)),
-                                       "测试次数: " + str(len(self.midnight_non_zero) + len(self.midnight_zero))))
+        print("{0:38}| {1:36}|".format("| 丢包率  : "+ self.lost_percentage(self.night_zero,self.night_non_zero),"丢包率  : " + self.lost_percentage(self.midnight_zero,self.midnight_non_zero)))
         print("{0:39}| {1:37}|".format("| 超时次数: " + self.red(len(self.night_zero)),
                                        "超时次数: " + self.red(len(self.midnight_zero))))
+        print("{0:30}| {1:28}|".format("| 测试次数: " + str(len(self.night_non_zero) + len(self.night_zero)),
+                                       "测试次数: " + str(len(self.midnight_non_zero) + len(self.midnight_zero))))
+
 
         print("-" * 53)
         print "| {0:63}|".format(self.blue("全局统计"))
-        print("{0:65}|".format("| 最低延迟: " + self.colored(min(total_non_zero) if len(total_non_zero) != 0 else 0)))
+        print("{0:41}{1:36}|".format("| 最低延迟: " + self.colored(min(total_non_zero) if len(total_non_zero) != 0 else 0),"丢包率    : " + self.lost_percentage(total_zero_list,total_non_zero)))
         print("{0:41}{1:38}|".format("| 最高延迟: " + self.colored(max(total_non_zero) if len(total_non_zero) != 0 else 0),"总超时次数: " + self.red(total_zero)))
         print("{0:41}{1:29}|".format("| 平均延迟: " + self.colored(total_average),"总测试次数: " + str(total_count)))
 
@@ -269,6 +290,4 @@ if __name__ == "__main__" :
         p = Pinger(pinghost)
         p.start()
     else:
-        print("\n请讲服务器时间调整正确后运行本程序！")
-
-
+        print("\n请将服务器时间调整正确后运行本程序！")
