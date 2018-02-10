@@ -121,7 +121,7 @@ class Pinger():
 
 
     def is_night(self,d):
-        if  19 <= d["hour"] <= 23:
+        if  18 <= d["hour"] <= 23:
             return True
         else:
             return False
@@ -139,7 +139,7 @@ class Pinger():
             return False
 
     def is_afternoon(self,d):
-        if 12 < d["hour"] < 19:
+        if 12 < d["hour"] < 18:
             return True
         else:
             return False
